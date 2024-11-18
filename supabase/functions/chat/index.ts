@@ -104,6 +104,13 @@ type Message = {
   role: "assistant" | "user";
 }
 
+type UserInfo = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+}
+
 /**
  * *********************************
  * UTILS
@@ -277,7 +284,13 @@ async function getChat(user: any): Promise<string> {
   const daysTranscurred = calculateDaysTranscurred(chat.created_at);
   
   // Get the message for the day
-  const messageAutomatic = OPENAI_CONVERSATION_STARTEDS_PER_DAYS[daysTranscurred];
+  let messageAutomatic = OPENAI_CONVERSATION_STARTEDS_PER_DAYS[daysTranscurred];
+  
+  // Replace the [NAME] placeholder with the user's name
+  if(messageAutomatic.includes("[NAME]")) {
+    const userInfo: UserInfo = await getUserById(user.id);
+    messageAutomatic = messageAutomatic.replace("[NAME]", userInfo.first_name);
+  }
   
   // Check if the message exists in the chat
   const existMessageAutomaticInChat = await searchMessageByChatId(chat.id, messageAutomatic);
@@ -300,7 +313,7 @@ async function getChat(user: any): Promise<string> {
  */
 async function addMessageToChat(message: string, chatId: string, role: 'user' | 'assistant' = 'user') {
   const client = getClient();
-  
+
   const { data, error } = await client
     .from("messages")
     .insert([
@@ -355,6 +368,26 @@ async function searchMessageByChatId(chatId: string, content: string): Promise<M
   }
 
   return message;
+}
+
+/**
+ * Get the user by ID
+ * @param userId 
+ * @returns user
+ */
+async function getUserById(userId: string) {
+  const client = getClient();
+  const { data: user, error } = await client
+    .from("users")
+    .select("id, first_name, last_name, email")
+    .eq("id", userId)
+    .single();
+
+  if (error) {
+    throw new Error("Error getting user", error);
+  }
+
+  return user;
 }
 
 /**
