@@ -285,7 +285,7 @@ async function addMessageToChat(
     .single();
 
   if (error) {
-    throw new Error("Error saving message: " + JSON.stringify(error));
+    return [];
   }
 }
 
