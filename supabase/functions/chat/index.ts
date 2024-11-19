@@ -152,7 +152,9 @@ async function createChatConversationsOpenAi(
 
   if (!responsse.ok) {
     const error = await responsse.json();
-    throw new Error("Error interacting with OpenAI API", error);
+    throw new Error(
+      "Error interacting with OpenAI API: " + JSON.stringify(error),
+    );
   }
 
   const data = await responsse.json();
@@ -246,7 +248,7 @@ async function addMessageToChat(
     .single();
 
   if (error) {
-    throw new Error("Error saving message", error);
+    throw new Error("Error saving message: " + JSON.stringify(error));
   }
 }
 
@@ -264,7 +266,7 @@ async function getMessagesByChatId(chatId: string): Promise<Message[]> {
     .order("id", { ascending: true });
 
   if (error) {
-    throw new Error("Error getting messages", error);
+    throw new Error("Error getting messages: " + JSON.stringify(error));
   }
 
   return messages;
@@ -292,10 +294,10 @@ async function GET(req: RequestWithUser) {
     const messages = await getMessagesByChatId(chat.id);
 
     return new Response(JSON.stringify({ messages }), { status: 200 });
-  } catch (e) {
-    console.error("Error processing request:", e);
+  } catch (e: any) {
+    console.error("Error processing request:", e.message);
     return new Response(
-      JSON.stringify({ error: "Internal server error", details: e }),
+      JSON.stringify({ error: "Internal server error", details: e.message }),
       { status: 500 },
     );
   }
@@ -342,11 +344,11 @@ async function POST(req: RequestWithUser) {
     return new Response(JSON.stringify({ message: messageResponse }), {
       status: 200,
     });
-  } catch (e) {
+  } catch (e: any) {
     // Log unexpected errors and return an internal server error response
-    console.error("Error processing request:", e);
+    console.error("Error processing request:", e.message);
     return new Response(
-      JSON.stringify({ error: "Internal server error", details: e }),
+      JSON.stringify({ error: "Internal server error", details: e.message }),
       { status: 500 },
     );
   }
