@@ -260,7 +260,8 @@ async function getMessagesByChatId(chatId: string): Promise<Message[]> {
   const { data: messages, error } = await client
     .from("messages")
     .select("content, role")
-    .eq("chat_id", chatId);
+    .eq("chat_id", chatId)
+    .order("id", { ascending: true });
 
   if (error) {
     throw new Error("Error getting messages", error);
