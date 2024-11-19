@@ -236,15 +236,19 @@ function calculateDaysTranscurred(date: string) {
  */
 async function getChatsLast90Days(): Promise<Chat[]> {
   const client = getClient();
+
+  // Get the date 90 days ago
+  const ninetyDaysAgo = new Date(
+    Date.now() -
+      OPENAI_CONVERSATION_STARTEDS_LIMITE_DAYS * 24 * 60 * 60 * 1000,
+  ).toISOString();
+
   const { data: chats, error } = await client
     .from("chats")
     .select("id, user_id, created_at")
     .gte(
       "created_at",
-      new Date(
-        Date.now() -
-          OPENAI_CONVERSATION_STARTEDS_LIMITE_DAYS * 24 * 60 * 60 * 1000,
-      ),
+      ninetyDaysAgo,
     )
     .order("created_at", { ascending: false });
 
