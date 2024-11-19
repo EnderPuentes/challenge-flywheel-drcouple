@@ -253,7 +253,7 @@ async function getChatsLast90Days(): Promise<Chat[]> {
     .order("created_at", { ascending: false });
 
   if (error) {
-    throw new Error("Error getting chats", error);
+    throw new Error("Error getting chats: " + JSON.stringify(error));
   }
 
   return chats;
@@ -285,7 +285,7 @@ async function addMessageToChat(
     .single();
 
   if (error) {
-    throw new Error("Error saving message", error);
+    throw new Error("Error saving message: " + JSON.stringify(error));
   }
 }
 
@@ -327,7 +327,7 @@ async function getUserById(userId: string): Promise<UserInfo> {
     .single();
 
   if (error) {
-    throw new Error("Error getting user", error);
+    throw new Error("Error getting user: " + JSON.stringify(error));
   }
 
   return user;
@@ -380,11 +380,11 @@ async function POST(_req: Request) {
     }
 
     return new Response("Messages sent successfully", { status: 200 });
-  } catch (e) {
+  } catch (e: any) {
     // Log unexpected errors and return an internal server error response
-    console.error("Error processing request:", e);
+    console.error("Error processing request:", e.message);
     return new Response(
-      JSON.stringify({ error: "Internal server error", details: e }),
+      JSON.stringify({ error: "Internal server error", details: e.message }),
       { status: 500 },
     );
   }
