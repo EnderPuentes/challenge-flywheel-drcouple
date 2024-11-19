@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const OPENAI_CONVERSATION_STARTEDS_LIMITE_DAYS = 90;
 const OPENAI_CONVERSATION_STARTEDS_PER_DAYS = {
-  1: "Let me introduce myself: I'm Dr. Couple, an AI expert in love psychology, relationships, and rapid conflict resolution. I'm here to help you avoid the typical mistakes that only make things worse, and, most importantly, to help you reconnect emotionally and physically. \n However, I'm going to be direct with you: saving your relationship will also require determination, maturity, and some self-work. Are you ready to commit to rebuilding this relationship?",
+  1: "I'm Dr. Couple, an AI expert in love psychology, relationships, and rapid conflict resolution. I'm here to help you avoid the typical mistakes that only make things worse, and, most importantly, to help you reconnect emotionally and physically. \n\n However, I'm going to be direct with you: saving your relationship will also require determination, maturity, and some self-work. Are you ready to commit to rebuilding this relationship?",
   2: "Great to see you back! Today, I'd like to dive into Dimension 2 with you: your both personalities. First, can you describe what you love most about your partner's personality? Feel free to share any stories or examples.",
   3: "How are things going today with your partner?",
   4: "Hope you're doing well! Thank you for already sharing all of this; it's essential to help me understand our relationship Today, I'd like to learn more about your life goals. At this point, do you feel like your future plans are compatible?",
@@ -460,7 +460,7 @@ async function POST(req: Request) {
     // Save the AI's response as a message in the chat
     await addMessageToChat(aiMessage, chat.id, 'assistant');
 
-    const messageResponse: Message = { content: aiMessage + "dias transcurridos: " + daysTranscurred, role: "assistant" }
+    const messageResponse: Message = { content: aiMessage, role: "assistant" }
 
     // Return the message in the response
     return new Response(
